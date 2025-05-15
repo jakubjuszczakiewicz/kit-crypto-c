@@ -23,7 +23,7 @@
 kit_aes_encrypt_block_128_asm:
   preserve_caller_registers
 
-  vld1.u8 {q0}, [r2]
+  vld1.u8 {q0}, [r2]!
   vld1.u8 {q1, q2}, [r0]!
   vld1.u8 {q3, q4}, [r0]!
   vld1.u8 {q5, q6}, [r0]!
@@ -52,16 +52,16 @@ kit_aes_encrypt_block_128_asm:
   aese.8  q0, q10
   veor.8  q0, q0, q11
 
-  vst1.u8 {q0}, [r1]
+  vst1.u8 {q0},[r1]
 
   restore_caller_registers
-  mov     pc, lr
+  bx lr
 
 .p2align 4
 kit_aes_encrypt_block_192_asm:
   preserve_caller_registers
 
-  vld1.u8 {q0}, [r2]
+  vld1.u8 {q0}, [r2]!
   vld1.u8 {q1, q2}, [r0]!
   vld1.u8 {q3, q4}, [r0]!
   vld1.u8 {q5, q6}, [r0]!
@@ -95,16 +95,16 @@ kit_aes_encrypt_block_192_asm:
   aese.8  q0, q12
   veor.8  q0, q0, q13
 
-  vst1.u8 {q0}, [r1]
+  vst1.u8 {q0},[r1]
 
   restore_caller_registers
-  mov     pc, lr
+  bx lr
 
 .p2align 4
 kit_aes_encrypt_block_256_asm:
   preserve_caller_registers
 
-  vld1.u8 {q0}, [r2]
+  vld1.u8 {q0}, [r2]!
   vld1.u8 {q1, q2}, [r0]!
   vld1.u8 {q3, q4}, [r0]!
   vld1.u8 {q5, q6}, [r0]!
@@ -143,16 +143,16 @@ kit_aes_encrypt_block_256_asm:
   aese.8  q0, q14
   veor.8  q0, q0, q15
 
-  vst1.u8 {q0}, [r1]
+  vst1.u8 {q0},[r1]
 
   restore_caller_registers
-  mov     pc, lr
+  bx lr
 
 .p2align 4
 kit_aes_decrypt_block_128_asm:
   preserve_caller_registers
 
-  vld1.u8 {q0}, [r2]
+  vld1.u8 {q0}, [r2]!
   vld1.u8 {q1, q2}, [r0]!
   vld1.u8 {q3, q4}, [r0]!
   vld1.u8 {q5, q6}, [r0]!
@@ -199,16 +199,16 @@ kit_aes_decrypt_block_128_asm:
   aesd.8  q0, q1
   veor.8  q0, q0, q1
 
-  vst1.u8 {q0}, [r1]
+  vst1.u8 {q0},[r1]
 
   restore_caller_registers
-  mov     pc, lr
+  bx lr
 
 .p2align 4
 kit_aes_decrypt_block_192_asm:
   preserve_caller_registers
 
-  vld1.u8 {q0}, [r2]
+  vld1.u8 {q0}, [r2]!
   vld1.u8 {q1, q2}, [r0]!
   vld1.u8 {q3, q4}, [r0]!
   vld1.u8 {q5, q6}, [r0]!
@@ -264,16 +264,16 @@ kit_aes_decrypt_block_192_asm:
   aesd.8  q0, q1
   veor.8  q0, q0, q1
 
-  vst1.u8 {q0}, [r1]
+  vst1.u8 {q0},[r1]
 
   restore_caller_registers
-  mov     pc, lr
+  bx lr
 
 .p2align 4
 kit_aes_decrypt_block_256_asm:
   preserve_caller_registers
 
-  vld1.u8 {q0}, [r2]
+  vld1.u8 {q0}, [r2]!
   vld1.u8 {q1, q2}, [r0]!
   vld1.u8 {q3, q4}, [r0]!
   vld1.u8 {q5, q6}, [r0]!
@@ -338,7 +338,7 @@ kit_aes_decrypt_block_256_asm:
   aesd.8  q0, q1
   veor.8  q0, q0, q1
 
-  vst1.u8 {q0}, [r1]
+  vst1.u8 {q0},[r1]
 
   restore_caller_registers
-  mov     pc, lr
+  bx lr

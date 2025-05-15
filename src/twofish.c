@@ -21,6 +21,7 @@
 #define LFSR1(x) (((x) >> 1) ^ (((x) & 0x01) * (MDS_GF_FDBK >> 1)))
 #define LFSR2(x) (((x) >> 2) ^ ((((x) & 0x02) >> 1) * (MDS_GF_FDBK >> 1)) \
                               ^ (((x) & 0x01) * (MDS_GF_FDBK >> 2)))
+
 #define Mx_1(x) ((uint32_t)(x))
 #define Mx_X(x) ((uint32_t)((x) ^            LFSR2(x)))
 #define Mx_Y(x) ((uint32_t)((x) ^ LFSR1(x) ^ LFSR2(x)))

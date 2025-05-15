@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Krypto-IT Jakub Juszczakiewicz
+# Copyright (c) 2025 Krypto-IT Jakub Juszczakiewicz
 # All rights reserved.
 
 cmake_minimum_required(VERSION 3.1...3.5)
@@ -19,14 +19,6 @@ if(IS_BIG_ENDIAN)
  add_definitions(-DBIG_ENDIAN)
 else()
  add_definitions(-DLITTLE_ENDIAN)
-endif()
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  add_definitions(-DSIZE_T_BITS=64)
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  add_definitions(-DSIZE_T_BITS=32)
-else()
-  message(FATAL_ERROR "Unsupported architecture")
 endif()
 
 set(ALG_NASM False CACHE BOOL "Add support for assembler code compiled by nasm")

@@ -54,12 +54,12 @@
     d += tmp1; \
     h = tmp1 + tmp2
 
-static const uint32_t sha256_init_vector[KIT_SHA2_STATE_VALUES_COUNT] = {
+static const uint32_t sha256_init_vector[8] = {
   0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c,
   0x1f83d9ab, 0x5be0cd19
 };
 
-static const uint32_t sha224_init_vector[KIT_SHA2_STATE_VALUES_COUNT] = {
+static const uint32_t sha224_init_vector[8] = {
   0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 0xffc00b31, 0x68581511,
   0x64f98fa7, 0xbefa4fa4
 };
@@ -78,13 +78,13 @@ static const uint32_t sha256_init_round_vector[64] = {
   0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
-static const uint64_t sha512_init_vector[KIT_SHA2_STATE_VALUES_COUNT] = {
+static const uint64_t sha512_init_vector[8] = {
   0x6a09e667f3bcc908, 0xbb67ae8584caa73b, 0x3c6ef372fe94f82b,
   0xa54ff53a5f1d36f1, 0x510e527fade682d1, 0x9b05688c2b3e6c1f,
   0x1f83d9abfb41bd6b, 0x5be0cd19137e2179
 };
 
-static const uint64_t sha384_init_vector[KIT_SHA2_STATE_VALUES_COUNT] = {
+static const uint64_t sha384_init_vector[8] = {
   0xcbbb9d5dc1059ed8, 0x629a292a367cd507, 0x9159015a3070dd17,
   0x152fecd8f70e5939, 0x67332667ffc00b31, 0x8eb44a8768581511,
   0xdb0c2e0d64f98fa7, 0x47b5481dbefa4fa4
@@ -122,7 +122,7 @@ static const uint64_t sha512_init_round_vector[80] = {
 
 void kit_sha256_init(kit_sha256_ctx * ctx)
 {
-  for (size_t i = 0; i < KIT_SHA2_STATE_VALUES_COUNT; i++)
+  for (size_t i = 0; i < 8; i++)
     ctx->h[i] = sha256_init_vector[i];
 
   memset(ctx->buf, 0, sizeof(ctx->buf));
@@ -366,7 +366,7 @@ void kit_sha256(uint8_t * output, const uint8_t * input, size_t length)
 
 void kit_sha224_init(kit_sha256_ctx * ctx)
 {
-  for (size_t i = 0; i < KIT_SHA2_STATE_VALUES_COUNT; i++)
+  for (size_t i = 0; i < 8; i++)
     ctx->h[i] = sha224_init_vector[i];
 
   memset(ctx->buf, 0, sizeof(ctx->buf));

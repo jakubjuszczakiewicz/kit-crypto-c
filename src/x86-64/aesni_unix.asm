@@ -13,8 +13,6 @@ SECTION .text
 
 kit_aes_cpu_is_supported:
 	push rbx
-	push rcx
-	push rdx
 
 	mov rax, 1
 	cpuid
@@ -22,8 +20,6 @@ kit_aes_cpu_is_supported:
 	shr eax, 25
 	and eax, 1
 
-	pop rdx
-	pop rcx
 	pop rbx
 	ret
 

@@ -11,10 +11,10 @@
 
 typedef struct kit_twofish_key_s
 {
+  unsigned int keySize;
   uint32_t key[8];
   uint32_t sbox_key[4];
   uint32_t sub_key[40];
-  uint32_t keySize;
   void (*e)(const struct kit_twofish_key_s * key, uint8_t * output,
       const uint8_t * input);
   void (*d)(const struct kit_twofish_key_s * key, uint8_t * output,
