@@ -1,3 +1,6 @@
+; Copyright (c) 2025 Krypto-IT Jakub Juszczakiewicz
+; All rights reserved.
+
 BITS 64
 
 SECTION .note.GNU-stack noalloc noexec nowrite progbits

@@ -1,4 +1,4 @@
-/* Copyright (c) 2023 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Krypto-IT Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -90,7 +90,7 @@ static const uint64_t sha384_init_vector[8] = {
   0xdb0c2e0d64f98fa7, 0x47b5481dbefa4fa4
 };
 
-static const uint64_t sha512_init_round_vector[80] = {
+const uint64_t sha512_init_round_vector[80] = {
   0x428a2f98d728ae22, 0x7137449123ef65cd, 0xb5c0fbcfec4d3b2f,
   0xe9b5dba58189dbbc, 0x3956c25bf348b538, 0x59f111f1b605d019,
   0x923f82a4af194f9b, 0xab1c5ed5da6d8118, 0xd807aa98a3030242,
@@ -119,6 +119,15 @@ static const uint64_t sha512_init_round_vector[80] = {
   0x431d67c49c100d4c, 0x4cc5d4becb3e42b6, 0x597f299cfc657e2a,
   0x5fcb6fab3ad6faec, 0x6c44198c4a475817
 };
+
+#ifdef ALG_SHA2_ASM_X86_64
+int is_sse41_supported(void);
+#else
+static int is_sse41_supported(void)
+{
+  return 0;
+}
+#endif
 
 void kit_sha256_init(kit_sha256_ctx * ctx)
 {
@@ -404,7 +413,30 @@ void kit_sha512_init(kit_sha512_ctx * ctx)
   ctx->processed_bytes[1] = 0;
 }
 
-static void kit_sha512_iterate(kit_sha512_ctx * ctx, const uint64_t * data)
+#ifdef ALG_SHA2_ASM_X86_64
+static void kit_sha512_asm_init(uint64_t * ctx, const uint64_t * data);
+static void kit_sha512_iterate_c(uint64_t * ctx, const uint64_t * data);
+
+void (*kit_sha512_iterate)(uint64_t * ctx, const uint64_t * data) =
+    kit_sha512_asm_init;
+
+void kit_sha512_iterate_asm(uint64_t * ctx, const uint64_t * data);
+
+static void kit_sha512_asm_init(uint64_t * ctx, const uint64_t * data)
+{
+  if (is_sse41_supported()) {
+    kit_sha512_iterate = kit_sha512_iterate_asm;
+  } else {
+    kit_sha512_iterate = kit_sha512_iterate_c;
+  }
+  kit_sha512_iterate(ctx, data);
+}
+
+#else
+#define kit_sha512_iterate kit_sha512_iterate_c
+#endif
+
+static void kit_sha512_iterate_c(uint64_t * ctx, const uint64_t * data)
 {
   uint64_t w[80];
 
@@ -490,8 +522,8 @@ static void kit_sha512_iterate(kit_sha512_ctx * ctx, const uint64_t * data)
   SHA512_INIT_EXP(78);
   SHA512_INIT_EXP(79);
 
-  uint64_t a = ctx->h[0], b = ctx->h[1], c = ctx->h[2], d = ctx->h[3];
-  uint64_t e = ctx->h[4], f = ctx->h[5], g = ctx->h[6], h = ctx->h[7];
+  uint64_t a = ctx[0], b = ctx[1], c = ctx[2], d = ctx[3];
+  uint64_t e = ctx[4], f = ctx[5], g = ctx[6], h = ctx[7];
   uint64_t tmp1, tmp2;
 
   SHA512_STEP(a, b, c, d, e, f, g, h, 0);
@@ -575,14 +607,14 @@ static void kit_sha512_iterate(kit_sha512_ctx * ctx, const uint64_t * data)
   SHA512_STEP(c, d, e, f, g, h, a, b, 78);
   SHA512_STEP(b, c, d, e, f, g, h, a, 79);
 
-  ctx->h[0] += a;
-  ctx->h[1] += b;
-  ctx->h[2] += c;
-  ctx->h[3] += d;
-  ctx->h[4] += e;
-  ctx->h[5] += f;
-  ctx->h[6] += g;
-  ctx->h[7] += h;
+  ctx[0] += a;
+  ctx[1] += b;
+  ctx[2] += c;
+  ctx[3] += d;
+  ctx[4] += e;
+  ctx[5] += f;
+  ctx[6] += g;
+  ctx[7] += h;
 }
 
 void kit_sha512_append(kit_sha512_ctx * ctx, const uint8_t * data,
@@ -599,14 +631,14 @@ void kit_sha512_append(kit_sha512_ctx * ctx, const uint8_t * data,
       ctx->buf_fill += add;
       if (ctx->buf_fill != sizeof(ctx->buf))
         return;
-      kit_sha512_iterate(ctx, (uint64_t *)ctx->buf);
+      kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
       ctx->processed_bytes[0] += sizeof(ctx->buf);
       if (ctx->processed_bytes[0] < sizeof(ctx->buf))
         ctx->processed_bytes[1]++;
       ctx->buf_fill = 0;
       pos += add;
     } else {
-      kit_sha512_iterate(ctx, (uint64_t *)&data[pos]);
+      kit_sha512_iterate(ctx->h, (uint64_t *)&data[pos]);
       pos += sizeof(ctx->buf);
       ctx->processed_bytes[0] += sizeof(ctx->buf);
       if (ctx->processed_bytes[0] < sizeof(ctx->buf))
@@ -618,7 +650,7 @@ void kit_sha512_append(kit_sha512_ctx * ctx, const uint8_t * data,
 void kit_sha512_finish_int(kit_sha512_ctx * ctx, uint8_t * output, int len)
 {
   if (ctx->buf_fill == sizeof(ctx->buf)) {
-    kit_sha512_iterate(ctx, (uint64_t *)ctx->buf);
+    kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
     ctx->buf_fill = 0;
   }
 
@@ -629,7 +661,7 @@ void kit_sha512_finish_int(kit_sha512_ctx * ctx, uint8_t * output, int len)
     ctx->processed_bytes[0] += ctx->buf_fill;
     if (ctx->processed_bytes[0] < ctx->buf_fill)
       ctx->processed_bytes[1]++;
-    kit_sha512_iterate(ctx, (uint64_t *)ctx->buf);
+    kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
 
     memset(ctx->buf, 0, sizeof(ctx->buf));
   } else {
@@ -661,7 +693,7 @@ void kit_sha512_finish_int(kit_sha512_ctx * ctx, uint8_t * output, int len)
   ctx->buf[sizeof(ctx->buf) - 15] = bits[1] >> 48;
   ctx->buf[sizeof(ctx->buf) - 16] = bits[1] >> 56;
 
-  kit_sha512_iterate(ctx, (uint64_t *)ctx->buf);
+  kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
 
   uint64_t * out = (uint64_t *)output;
 

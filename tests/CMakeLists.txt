@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Krypto-IT Jakub Juszczakiewicz
+# Copyright (c) 2025 Krypto-IT Jakub Juszczakiewicz
 # All rights reserved.
 
 enable_testing()
@@ -16,6 +16,7 @@ endif()
 if (ALG_SHA2)
 list(APPEND TESTS sha2)
 list(APPEND TESTS sha2_hmac)
+list(APPEND PERF_TESTS sha2)
 endif()
 
 if (ALG_MD5)
@@ -27,6 +28,9 @@ list(APPEND TESTS sha1)
 list(APPEND TESTS sha1_hmac)
 endif()
 
+if (ALG_UNG)
+list(APPEND TESTS ung)
+endif()
 
 if (BUILD_SHARED)
   set(TESTLIB kitcryptoc)
