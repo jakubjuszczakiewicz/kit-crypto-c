@@ -1,4 +1,4 @@
-/* Copyright (c) 2024 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -63,7 +63,6 @@ int test_sha1_1(void)
   return r;
 }
 
-
 int test_sha1_2(void)
 {
   uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES];
@@ -115,7 +114,6 @@ int test_sha1_5(void)
   return r;
 }
 
-
 int test_sha1_6(void)
 {
   uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES];
@@ -135,6 +133,17 @@ int test_sha1_6(void)
   return r;
 }
 
+int test_sha1_7(void)
+{
+  uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES + 2];
+  kit_sha1(hash + 2, "", 0);
+  int r = memcmp(hash + 2, hash_sha1_1, sizeof(hash_sha1_1));
+  if (r) {
+    fprintf(stderr, "7. Invalid SHA1 result from empty input\n");
+  }
+  return r;
+}
+
 int main(int argc, char * argv[])
 {
   if (test_sha1_1())
@@ -148,6 +157,8 @@ int main(int argc, char * argv[])
   if (test_sha1_5())
     return 1;
   if (test_sha1_6())
+    return 1;
+  if (test_sha1_7())
     return 1;
 
   return 0;

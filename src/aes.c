@@ -1,8 +1,9 @@
-/* Copyright (c) 2023 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
 #include <kitcryptoc/aes.h>
+#include <string.h>
 
 #define AES_BLOCK_SIZE 16
 
@@ -541,418 +542,418 @@ void kit_aes_init_256(kit_aes_key * key, const uint8_t * source)
 void kit_aes_encrypt_block_128(const kit_aes_key * key, uint8_t * output,
     const uint8_t * input)
 {
-  ((uint32_t *)output)[0] = ((uint32_t *)input)[0];
-  ((uint32_t *)output)[1] = ((uint32_t *)input)[1];
-  ((uint32_t *)output)[2] = ((uint32_t *)input)[2];
-  ((uint32_t *)output)[3] = ((uint32_t *)input)[3];
+  uint32_t block[4];
+  memcpy(block, input, AES_BLOCK_SIZE);
 
-  add_round_key(key, 0, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  add_round_key(key, 0, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 1, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 1, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 2, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 2, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 3, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 3, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 4, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 4, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 5, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 5, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 6, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 6, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 7, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 7, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 8, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 8, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 9, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 9, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  add_round_key(key, 10, (uint32_t *)output);
+  add_round_key(key, 10, block);
+
+  memcpy(output, block, AES_BLOCK_SIZE);
 }
 
 void kit_aes_encrypt_block_192(const kit_aes_key * key, uint8_t * output,
     const uint8_t * input)
 {
-  ((uint32_t *)output)[0] = ((uint32_t *)input)[0];
-  ((uint32_t *)output)[1] = ((uint32_t *)input)[1];
-  ((uint32_t *)output)[2] = ((uint32_t *)input)[2];
-  ((uint32_t *)output)[3] = ((uint32_t *)input)[3];
+  uint32_t block[4];
+  memcpy(block, input, AES_BLOCK_SIZE);
 
-  add_round_key(key, 0, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  add_round_key(key, 0, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 1, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 1, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 2, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 2, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 3, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 3, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 4, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 4, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 5, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 5, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 6, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 6, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 7, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 7, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 8, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 8, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 9, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 9, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 10, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 10, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 11, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 11, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  add_round_key(key, 12, (uint32_t *)output);
+  add_round_key(key, 12, block);
+
+  memcpy(output, block, AES_BLOCK_SIZE);
 }
 
 void kit_aes_encrypt_block_256(const kit_aes_key * key, uint8_t * output,
     const uint8_t * input)
 {
-  ((uint32_t *)output)[0] = ((uint32_t *)input)[0];
-  ((uint32_t *)output)[1] = ((uint32_t *)input)[1];
-  ((uint32_t *)output)[2] = ((uint32_t *)input)[2];
-  ((uint32_t *)output)[3] = ((uint32_t *)input)[3];
+  uint32_t block[4];
+  memcpy(block, input, AES_BLOCK_SIZE);
 
-  add_round_key(key, 0, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  add_round_key(key, 0, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 1, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 1, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 2, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 2, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 3, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 3, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 4, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 4, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 5, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 5, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 6, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 6, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 7, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 7, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 8, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 8, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 9, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 9, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 10, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 10, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 11, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 11, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 12, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 12, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  mix_columns((uint32_t *)output);
-  add_round_key(key, 13, (uint32_t *)output);
-  sub_bytes((uint32_t *)output);
-  shift_rows((uint32_t *)output);
+  mix_columns(block);
+  add_round_key(key, 13, block);
+  sub_bytes(block);
+  shift_rows(block);
 
-  add_round_key(key, 14, (uint32_t *)output);
+  add_round_key(key, 14, block);
+
+  memcpy(output, block, AES_BLOCK_SIZE);
 }
 
 void kit_aes_decrypt_block_128(const kit_aes_key * key, uint8_t * output,
     const uint8_t * input)
 {
-  ((uint32_t *)output)[0] = ((uint32_t *)input)[0];
-  ((uint32_t *)output)[1] = ((uint32_t *)input)[1];
-  ((uint32_t *)output)[2] = ((uint32_t *)input)[2];
-  ((uint32_t *)output)[3] = ((uint32_t *)input)[3];
+  uint32_t block[4];
+  memcpy(block, input, AES_BLOCK_SIZE);
 
-  add_round_key(key, 10, (uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 9, (uint32_t *)output);
+  add_round_key(key, 10, block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 9, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 8, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 8, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 7, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 7, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 6, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 6, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 5, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 5, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 4, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 4, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 3, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 3, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 2, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 2, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 1, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 1, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 0, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 0, block);
+
+  memcpy(output, block, AES_BLOCK_SIZE);
 }
 
 void kit_aes_decrypt_block_192(const kit_aes_key * key, uint8_t * output,
     const uint8_t * input)
 {
-  ((uint32_t *)output)[0] = ((uint32_t *)input)[0];
-  ((uint32_t *)output)[1] = ((uint32_t *)input)[1];
-  ((uint32_t *)output)[2] = ((uint32_t *)input)[2];
-  ((uint32_t *)output)[3] = ((uint32_t *)input)[3];
+  uint32_t block[4];
+  memcpy(block, input, AES_BLOCK_SIZE);
 
-  add_round_key(key, 12, (uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 11, (uint32_t *)output);
+  add_round_key(key, 12, block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 11, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 10, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 10, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 9, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 9, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 8, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 8, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 7, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 7, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 6, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 6, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 5, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 5, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 4, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 4, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 3, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 3, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 2, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 2, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 1, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 1, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 0, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 0, block);
+
+  memcpy(output, block, AES_BLOCK_SIZE);
 }
 
 void kit_aes_decrypt_block_256(const kit_aes_key * key, uint8_t * output,
     const uint8_t * input)
 {
-  ((uint32_t *)output)[0] = ((uint32_t *)input)[0];
-  ((uint32_t *)output)[1] = ((uint32_t *)input)[1];
-  ((uint32_t *)output)[2] = ((uint32_t *)input)[2];
-  ((uint32_t *)output)[3] = ((uint32_t *)input)[3];
+  uint32_t block[4];
+  memcpy(block, input, AES_BLOCK_SIZE);
 
-  add_round_key(key, 14, (uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 13, (uint32_t *)output);
+  add_round_key(key, 14, block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 13, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 12, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 12, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 11, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 11, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 10, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 10, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 9, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 9, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 8, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 8, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 7, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 7, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 6, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 6, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 5, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 5, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 4, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 4, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 3, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 3, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 2, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 2, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 1, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 1, block);
 
-  inv_mix_columns((uint32_t *)output);
-  inv_shift_rows((uint32_t *)output);
-  inv_sub_bytes((uint32_t *)output);
-  add_round_key(key, 0, (uint32_t *)output);
+  inv_mix_columns(block);
+  inv_shift_rows(block);
+  inv_sub_bytes(block);
+  add_round_key(key, 0, block);
+
+  memcpy(output, block, AES_BLOCK_SIZE);
 }
 
 void kit_aes_encrypt_block(const kit_aes_key * key, uint8_t * output,

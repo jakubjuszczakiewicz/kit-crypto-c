@@ -1,4 +1,4 @@
-/* Copyright (c) 2023 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -37,7 +37,7 @@ int test_twofish128(void)
   kit_twofish_key lkey;
   kit_twofish_init_128(&lkey, key);
 
-  uint8_t output[16], output2[16];
+  uint8_t output[18], output2[16];
 
   kit_twofish_encrypt_block(&lkey, output, plaintext[0]);
   if (memcmp(output, encrypted_128[0], 16)) {
@@ -60,6 +60,12 @@ int test_twofish128(void)
   kit_twofish_decrypt_block(&lkey, output2, output);
   if (memcmp(output2, plaintext[1], 16)) {
     fprintf(stderr, "Twofish 128 decryption fail (2)\n");
+    return 1;
+  }
+
+  kit_twofish_encrypt_block(&lkey, output + 2, plaintext[0]);
+  if (memcmp(output + 2, encrypted_128[0], 16)) {
+    fprintf(stderr, "Twofish 128 encryption fail (3)\n");
     return 1;
   }
 

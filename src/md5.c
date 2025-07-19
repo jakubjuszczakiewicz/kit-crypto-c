@@ -1,4 +1,4 @@
-/* Copyright (c) 2024 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -234,12 +234,23 @@ void kit_md5_finish(kit_md5_ctx * ctx, uint8_t * output)
 
   kit_md5_iterate(ctx, (uint32_t *)ctx->buf);
 
-  uint32_t * out = (uint32_t *)output;
+  output[0] = ctx->h[0];
+  output[1] = ctx->h[0] >> 8;
+  output[2] = ctx->h[0] >> 16;
+  output[3] = ctx->h[0] >> 24;
+  output[4] = ctx->h[1];
+  output[5] = ctx->h[1] >> 8;
+  output[6] = ctx->h[1] >> 16;
+  output[7] = ctx->h[1] >> 24;
+  output[8] = ctx->h[2];
+  output[9] = ctx->h[2] >> 8;
+  output[10] = ctx->h[2] >> 16;
+  output[11] = ctx->h[2] >> 24;
+  output[12] = ctx->h[3];
+  output[13] = ctx->h[3] >> 8;
+  output[14] = ctx->h[3] >> 16;
+  output[15] = ctx->h[3] >> 24;
 
-  out[0] = HTOLE32(ctx->h[0]);
-  out[1] = HTOLE32(ctx->h[1]);
-  out[2] = HTOLE32(ctx->h[2]);
-  out[3] = HTOLE32(ctx->h[3]);
 }
 
 void kit_md5(uint8_t * output, const uint8_t * input, size_t length)

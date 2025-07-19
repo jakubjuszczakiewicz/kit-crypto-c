@@ -1,4 +1,4 @@
-/* Copyright (c) 2024 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -302,13 +302,26 @@ void kit_sha1_finish(kit_sha1_ctx * ctx, uint8_t * output)
 
   kit_sha1_iterate(ctx, (uint32_t *)ctx->buf);
 
-  uint32_t * out = (uint32_t *)output;
-
-  out[0] = HTOBE32(ctx->h[0]);
-  out[1] = HTOBE32(ctx->h[1]);
-  out[2] = HTOBE32(ctx->h[2]);
-  out[3] = HTOBE32(ctx->h[3]);
-  out[4] = HTOBE32(ctx->h[4]);
+  output[0] = ctx->h[0] >> 24;
+  output[1] = ctx->h[0] >> 16;
+  output[2] = ctx->h[0] >> 8;
+  output[3] = ctx->h[0];
+  output[4] = ctx->h[1] >> 24;
+  output[5] = ctx->h[1] >> 16;
+  output[6] = ctx->h[1] >> 8;
+  output[7] = ctx->h[1];
+  output[8] = ctx->h[2] >> 24;
+  output[9] = ctx->h[2] >> 16;
+  output[10] = ctx->h[2] >> 8;
+  output[11] = ctx->h[2];
+  output[12] = ctx->h[3] >> 24;
+  output[13] = ctx->h[3] >> 16;
+  output[14] = ctx->h[3] >> 8;
+  output[15] = ctx->h[3];
+  output[16] = ctx->h[4] >> 24;
+  output[17] = ctx->h[4] >> 16;
+  output[18] = ctx->h[4] >> 8;
+  output[19] = ctx->h[4];
 }
 
 void kit_sha1(uint8_t * output, const uint8_t * input, size_t length)

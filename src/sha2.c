@@ -1,4 +1,4 @@
-/* Copyright (c) 2025 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -64,7 +64,7 @@ static const uint32_t sha224_init_vector[8] = {
   0x64f98fa7, 0xbefa4fa4
 };
 
-static const uint32_t sha256_init_round_vector[64] = {
+const uint32_t sha256_init_round_vector[64] = {
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
   0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
   0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -347,17 +347,41 @@ void kit_sha256_finish_int(kit_sha256_ctx * ctx, uint8_t * output, int len)
 
   kit_sha256_iterate(ctx, (uint32_t *)ctx->buf);
 
-  uint32_t * out = (uint32_t *)output;
+  output[0] = ctx->h[0] >> 24;
+  output[1] = ctx->h[0] >> 16;
+  output[2] = ctx->h[0] >> 8;
+  output[3] = ctx->h[0];
+  output[4] = ctx->h[1] >> 24;
+  output[5] = ctx->h[1] >> 16;
+  output[6] = ctx->h[1] >> 8;
+  output[7] = ctx->h[1];
+  output[8] = ctx->h[2] >> 24;
+  output[9] = ctx->h[2] >> 16;
+  output[10] = ctx->h[2] >> 8;
+  output[11] = ctx->h[2];
+  output[12] = ctx->h[3] >> 24;
+  output[13] = ctx->h[3] >> 16;
+  output[14] = ctx->h[3] >> 8;
+  output[15] = ctx->h[3];
+  output[16] = ctx->h[4] >> 24;
+  output[17] = ctx->h[4] >> 16;
+  output[18] = ctx->h[4] >> 8;
+  output[19] = ctx->h[4];
+  output[20] = ctx->h[5] >> 24;
+  output[21] = ctx->h[5] >> 16;
+  output[22] = ctx->h[5] >> 8;
+  output[23] = ctx->h[5];
+  output[24] = ctx->h[6] >> 24;
+  output[25] = ctx->h[6] >> 16;
+  output[26] = ctx->h[6] >> 8;
+  output[27] = ctx->h[6];
 
-  out[0] = HTOBE32(ctx->h[0]);
-  out[1] = HTOBE32(ctx->h[1]);
-  out[2] = HTOBE32(ctx->h[2]);
-  out[3] = HTOBE32(ctx->h[3]);
-  out[4] = HTOBE32(ctx->h[4]);
-  out[5] = HTOBE32(ctx->h[5]);
-  out[6] = HTOBE32(ctx->h[6]);
-  if (len)
-    out[7] = HTOBE32(ctx->h[7]);
+  if (len) {
+    output[28] = ctx->h[7] >> 24;
+    output[29] = ctx->h[7] >> 16;
+    output[30] = ctx->h[7] >> 8;
+    output[31] = ctx->h[7];
+  }
 }
 
 void kit_sha256_finish(kit_sha256_ctx * ctx, uint8_t * output)
@@ -695,17 +719,72 @@ void kit_sha512_finish_int(kit_sha512_ctx * ctx, uint8_t * output, int len)
 
   kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
 
-  uint64_t * out = (uint64_t *)output;
+  output[0] = ctx->h[0] >> 56;
+  output[1] = ctx->h[0] >> 48;
+  output[2] = ctx->h[0] >> 40;
+  output[3] = ctx->h[0] >> 32;
+  output[4] = ctx->h[0] >> 24;
+  output[5] = ctx->h[0] >> 16;
+  output[6] = ctx->h[0] >> 8;
+  output[7] = ctx->h[0];
+  output[8] = ctx->h[1] >> 56;
+  output[9] = ctx->h[1] >> 48;
+  output[10] = ctx->h[1] >> 40;
+  output[11] = ctx->h[1] >> 32;
+  output[12] = ctx->h[1] >> 24;
+  output[13] = ctx->h[1] >> 16;
+  output[14] = ctx->h[1] >> 8;
+  output[15] = ctx->h[1];
+  output[16] = ctx->h[2] >> 56;
+  output[17] = ctx->h[2] >> 48;
+  output[18] = ctx->h[2] >> 40;
+  output[19] = ctx->h[2] >> 32;
+  output[20] = ctx->h[2] >> 24;
+  output[21] = ctx->h[2] >> 16;
+  output[22] = ctx->h[2] >> 8;
+  output[23] = ctx->h[2];
+  output[24] = ctx->h[3] >> 56;
+  output[25] = ctx->h[3] >> 48;
+  output[26] = ctx->h[3] >> 40;
+  output[27] = ctx->h[3] >> 32;
+  output[28] = ctx->h[3] >> 24;
+  output[29] = ctx->h[3] >> 16;
+  output[30] = ctx->h[3] >> 8;
+  output[31] = ctx->h[3];
+  output[32] = ctx->h[4] >> 56;
+  output[33] = ctx->h[4] >> 48;
+  output[34] = ctx->h[4] >> 40;
+  output[35] = ctx->h[4] >> 32;
+  output[36] = ctx->h[4] >> 24;
+  output[37] = ctx->h[4] >> 16;
+  output[38] = ctx->h[4] >> 8;
+  output[39] = ctx->h[4];
+  output[40] = ctx->h[5] >> 56;
+  output[41] = ctx->h[5] >> 48;
+  output[42] = ctx->h[5] >> 40;
+  output[43] = ctx->h[5] >> 32;
+  output[44] = ctx->h[5] >> 24;
+  output[45] = ctx->h[5] >> 16;
+  output[46] = ctx->h[5] >> 8;
+  output[47] = ctx->h[5];
 
-  out[0] = HTOBE64(ctx->h[0]);
-  out[1] = HTOBE64(ctx->h[1]);
-  out[2] = HTOBE64(ctx->h[2]);
-  out[3] = HTOBE64(ctx->h[3]);
-  out[4] = HTOBE64(ctx->h[4]);
-  out[5] = HTOBE64(ctx->h[5]);
   if (len) {
-    out[6] = HTOBE64(ctx->h[6]);
-    out[7] = HTOBE64(ctx->h[7]);
+    output[48] = ctx->h[6] >> 56;
+    output[49] = ctx->h[6] >> 48;
+    output[50] = ctx->h[6] >> 40;
+    output[51] = ctx->h[6] >> 32;
+    output[52] = ctx->h[6] >> 24;
+    output[53] = ctx->h[6] >> 16;
+    output[54] = ctx->h[6] >> 8;
+    output[55] = ctx->h[6];
+    output[56] = ctx->h[7] >> 56;
+    output[57] = ctx->h[7] >> 48;
+    output[58] = ctx->h[7] >> 40;
+    output[59] = ctx->h[7] >> 32;
+    output[60] = ctx->h[7] >> 24;
+    output[61] = ctx->h[7] >> 16;
+    output[62] = ctx->h[7] >> 8;
+    output[63] = ctx->h[7];
   }
 }
 

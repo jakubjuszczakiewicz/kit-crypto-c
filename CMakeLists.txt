@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Krypto-IT Jakub Juszczakiewicz
 # All rights reserved.
 
-cmake_minimum_required(VERSION 3.1...3.5)
+cmake_minimum_required(VERSION 3.1...3.9)
 project(kit-crypto-c C)
 
 set(WITH_TESTS TRUE CACHE BOOL true)
@@ -71,7 +71,7 @@ if (ALG_TWOFISH)
 endif()
 
 set(ALG_SHA2 True CACHE BOOL "Add support for SHA2 algorithms")
-set(ALG_SHA2_ASM_X86_64 True CACHE BOOL "Add support for SHA2 algorithms optimized for x86_64")
+set(ALG_SHA2_ASM_X86_64 False CACHE BOOL "Add support for SHA2 algorithms optimized for x86_64")
 if (ALG_SHA2)
   add_definitions(-DALG_SHA2)
   list(APPEND HEADER_FILES include/kitcryptoc/sha2.h include/kitcryptoc/sha2_hmac.h)

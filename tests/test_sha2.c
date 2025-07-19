@@ -1,4 +1,4 @@
-/* Copyright (c) 2023 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -264,6 +264,17 @@ int test_sha224_2(void)
   return r;
 }
 
+int test_sha224_3(void)
+{
+  uint8_t hash[KIT_SHA256_OUTPUT_SIZE_BYTES + 2];
+  kit_sha224(hash + 2, ".", 1);
+  int r = memcmp(hash + 2, hash_sha224_2, sizeof(hash_sha224_2));
+  if (r) {
+    fprintf(stderr, "3. Invalid SHA224 result from \".\" input\n");
+  }
+  return r;
+}
+
 int test_sha512_1(void)
 {
   uint8_t hash[KIT_SHA512_OUTPUT_SIZE_BYTES];
@@ -368,6 +379,17 @@ int test_sha384_2(void)
   return r;
 }
 
+int test_sha384_3(void)
+{
+  uint8_t hash[KIT_SHA384_OUTPUT_SIZE_BYTES + 2];
+  kit_sha384(hash + 2, ".", 1);
+  int r = memcmp(hash + 2, hash_sha384_2, sizeof(hash_sha384_2));
+  if (r) {
+    fprintf(stderr, "3. Invalid SHA384 result from \".\" input\n");
+  }
+  return r;
+}
+
 int main(int argc, char * argv[])
 {
   if (test_sha256_1())
@@ -388,6 +410,8 @@ int main(int argc, char * argv[])
     return 1;
   if (test_sha224_2())
     return 1;
+  if (test_sha224_3())
+    return 1;
   if (test_sha512_1())
     return 1;
   if (test_sha512_2())
@@ -405,6 +429,8 @@ int main(int argc, char * argv[])
   if (test_sha384_1())
     return 1;
   if (test_sha384_2())
+    return 1;
+  if (test_sha384_3())
     return 1;
 
   return 0;

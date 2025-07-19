@@ -1,4 +1,4 @@
-/* Copyright (c) 2024 Krypto-IT Jakub Juszczakiewicz
+/* Copyright (c) 2025 Jakub Juszczakiewicz
  * All rights reserved.
  */
 
@@ -150,6 +150,16 @@ int test_md5_8(void)
   return r;
 }
 
+int test_md5_9(void)
+{
+  uint8_t hash[KIT_MD5_OUTPUT_SIZE_BYTES + 2];
+  kit_md5(hash + 2, "", 0);
+  int r = memcmp(hash + 2, hash_md5_1, sizeof(hash_md5_1));
+  if (r) {
+    fprintf(stderr, "9. Invalid MD5 result from empty input\n");
+  }
+  return r;
+}
 
 int main(int argc, char * argv[])
 {
@@ -168,6 +178,8 @@ int main(int argc, char * argv[])
   if (test_md5_7())
     return 1;
   if (test_md5_8())
+    return 1;
+  if (test_md5_9())
     return 1;
 
   return 0;
