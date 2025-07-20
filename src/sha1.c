@@ -60,25 +60,42 @@ void kit_sha1_init(kit_sha1_ctx * ctx)
   ctx->processed_bytes = 0;
 }
 
-static void kit_sha1_iterate(kit_sha1_ctx * ctx, const uint32_t * data)
+static void kit_sha1_iterate(kit_sha1_ctx * ctx, const uint8_t * data)
 {
   uint32_t x[SHA1_WORK_WORDS];
-  x[0] = HTOBE32(data[0]);
-  x[1] = HTOBE32(data[1]);
-  x[2] = HTOBE32(data[2]);
-  x[3] = HTOBE32(data[3]);
-  x[4] = HTOBE32(data[4]);
-  x[5] = HTOBE32(data[5]);
-  x[6] = HTOBE32(data[6]);
-  x[7] = HTOBE32(data[7]);
-  x[8] = HTOBE32(data[8]);
-  x[9] = HTOBE32(data[9]);
-  x[10] = HTOBE32(data[10]);
-  x[11] = HTOBE32(data[11]);
-  x[12] = HTOBE32(data[12]);
-  x[13] = HTOBE32(data[13]);
-  x[14] = HTOBE32(data[14]);
-  x[15] = HTOBE32(data[15]);
+
+  x[0] = ((uint32_t)data[0] << 24) | ((uint32_t)data[1] << 16) |
+      ((uint32_t)data[2] << 8) | ((uint32_t)data[3]);
+  x[1] = ((uint32_t)data[4] << 24) | ((uint32_t)data[5] << 16) |
+      ((uint32_t)data[6] << 8) | ((uint32_t)data[7]);
+  x[2] = ((uint32_t)data[8] << 24) | ((uint32_t)data[9] << 16) |
+      ((uint32_t)data[10] << 8) | ((uint32_t)data[11]);
+  x[3] = ((uint32_t)data[12] << 24) | ((uint32_t)data[13] << 16) |
+      ((uint32_t)data[14] << 8) | ((uint32_t)data[15]);
+  x[4] = ((uint32_t)data[16] << 24) | ((uint32_t)data[17] << 16) |
+      ((uint32_t)data[18] << 8) | ((uint32_t)data[19]);
+  x[5] = ((uint32_t)data[20] << 24) | ((uint32_t)data[21] << 16) |
+      ((uint32_t)data[22] << 8) | ((uint32_t)data[23]);
+  x[6] = ((uint32_t)data[24] << 24) | ((uint32_t)data[25] << 16) |
+      ((uint32_t)data[26] << 8) | ((uint32_t)data[27]);
+  x[7] = ((uint32_t)data[28] << 24) | ((uint32_t)data[29] << 16) |
+      ((uint32_t)data[30] << 8) | ((uint32_t)data[31]);
+  x[8] = ((uint32_t)data[32] << 24) | ((uint32_t)data[33] << 16) |
+      ((uint32_t)data[34] << 8) | ((uint32_t)data[35]);
+  x[9] = ((uint32_t)data[36] << 24) | ((uint32_t)data[37] << 16) |
+      ((uint32_t)data[38] << 8) | ((uint32_t)data[39]);
+  x[10] = ((uint32_t)data[40] << 24) | ((uint32_t)data[41] << 16) |
+      ((uint32_t)data[42] << 8) | ((uint32_t)data[43]);
+  x[11] = ((uint32_t)data[44] << 24) | ((uint32_t)data[45] << 16) |
+      ((uint32_t)data[46] << 8) | ((uint32_t)data[47]);
+  x[12] = ((uint32_t)data[48] << 24) | ((uint32_t)data[49] << 16) |
+      ((uint32_t)data[50] << 8) | ((uint32_t)data[51]);
+  x[13] = ((uint32_t)data[52] << 24) | ((uint32_t)data[53] << 16) |
+      ((uint32_t)data[54] << 8) | ((uint32_t)data[55]);
+  x[14] = ((uint32_t)data[56] << 24) | ((uint32_t)data[57] << 16) |
+      ((uint32_t)data[58] << 8) | ((uint32_t)data[59]);
+  x[15] = ((uint32_t)data[60] << 24) | ((uint32_t)data[61] << 16) |
+      ((uint32_t)data[62] << 8) | ((uint32_t)data[63]);
 
   INIT_EXT(x, 16);
   INIT_EXT(x, 17);
@@ -256,12 +273,12 @@ void kit_sha1_append(kit_sha1_ctx * ctx, const uint8_t * data, size_t length)
       ctx->buf_fill += add;
       if (ctx->buf_fill != sizeof(ctx->buf))
         return;
-      kit_sha1_iterate(ctx, (uint32_t *)ctx->buf);
+      kit_sha1_iterate(ctx, ctx->buf);
       ctx->processed_bytes += sizeof(ctx->buf);
       ctx->buf_fill = 0;
       pos += add;
     } else {
-      kit_sha1_iterate(ctx, (uint32_t *)&data[pos]);
+      kit_sha1_iterate(ctx, &data[pos]);
       pos += sizeof(ctx->buf);
       ctx->processed_bytes += sizeof(ctx->buf);
     }
@@ -271,7 +288,7 @@ void kit_sha1_append(kit_sha1_ctx * ctx, const uint8_t * data, size_t length)
 void kit_sha1_finish(kit_sha1_ctx * ctx, uint8_t * output)
 {
   if (ctx->buf_fill == sizeof(ctx->buf)) {
-    kit_sha1_iterate(ctx, (uint32_t *)ctx->buf);
+    kit_sha1_iterate(ctx, ctx->buf);
     ctx->buf_fill = 0;
   }
 
@@ -280,7 +297,7 @@ void kit_sha1_finish(kit_sha1_ctx * ctx, uint8_t * output)
     memset(&ctx->buf[ctx->buf_fill + 1], 0, sizeof(ctx->buf) - 1 -
         ctx->buf_fill);
     ctx->processed_bytes += ctx->buf_fill;
-    kit_sha1_iterate(ctx, (uint32_t *)ctx->buf);
+    kit_sha1_iterate(ctx, ctx->buf);
 
     memset(ctx->buf, 0, sizeof(ctx->buf));
   } else {
@@ -300,7 +317,7 @@ void kit_sha1_finish(kit_sha1_ctx * ctx, uint8_t * output)
   ctx->buf[sizeof(ctx->buf) - 7] = bits >> 48;
   ctx->buf[sizeof(ctx->buf) - 8] = bits >> 56;
 
-  kit_sha1_iterate(ctx, (uint32_t *)ctx->buf);
+  kit_sha1_iterate(ctx, ctx->buf);
 
   output[0] = ctx->h[0] >> 24;
   output[1] = ctx->h[0] >> 16;

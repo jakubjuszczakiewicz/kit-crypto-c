@@ -60,6 +60,9 @@ const uint8_t hash_sha256_7[KIT_SHA256_OUTPUT_SIZE_BYTES] = {
   0x6c, 0xd9, 0x25, 0x58, 0xf3, 0x90
 };
 
+const char sha256_input_8[] =
+  "  ................................................................";
+
 const uint8_t hash_sha224_1[KIT_SHA224_OUTPUT_SIZE_BYTES] = {
   0xd1, 0x4a, 0x02, 0x8c, 0x2a, 0x3a, 0x2b, 0xc9, 0x47, 0x61, 0x02, 0xbb, 0x28,
   0x82, 0x34, 0xc4, 0x15, 0xa2, 0xb0, 0x1f, 0x82, 0x8e, 0xa6, 0x2a, 0xc5, 0xb3,
@@ -145,6 +148,8 @@ const uint8_t hash_sha512_7[KIT_SHA512_OUTPUT_SIZE_BYTES] = {
   0xf4, 0x1c, 0xa7, 0x51, 0xe1, 0x47, 0xae, 0xb5, 0x5c, 0xf1, 0x9d, 0xbe
 };
 
+const char sha512_input_8[] =
+  " HPsRK2nW8E5bYrUd/I3JvWbwLRXfOuL6cBmI4+SJEd8NtnXHNy5E9MvnEZ/BjRXtzDYYRr3J5w";
 
 const uint8_t hash_sha384_1[KIT_SHA384_OUTPUT_SIZE_BYTES] = {
   0x38, 0xb0, 0x60, 0xa7, 0x51, 0xac, 0x96, 0x38, 0x4c, 0xd9, 0x32, 0x7e, 0xb1,
@@ -238,6 +243,18 @@ int test_sha256_7(void)
   if (r) {
     fprintf(stderr, "7. Invalid SHA256 result from \"%s\" input\n",
         sha256_input_7);
+  }
+  return r;
+}
+
+int test_sha256_8(void)
+{
+  uint8_t hash[KIT_SHA256_OUTPUT_SIZE_BYTES];
+  kit_sha256(hash, sha256_input_8 + 2, sizeof(sha256_input_8) - 3);
+  int r = memcmp(hash, hash_sha256_3, sizeof(hash_sha256_3));
+  if (r) {
+    fprintf(stderr, "8. Invalid SHA256 result from \"%s\" input\n",
+        sha256_input_8 + 2);
   }
   return r;
 }
@@ -357,6 +374,18 @@ int test_sha512_7(void)
   return r;
 }
 
+int test_sha512_8(void)
+{
+  uint8_t hash[KIT_SHA512_OUTPUT_SIZE_BYTES];
+  kit_sha512(hash, sha512_input_8 + 1, sizeof(sha512_input_8) - 2);
+  int r = memcmp(hash, hash_sha512_7, sizeof(hash_sha512_7));
+  if (r) {
+    fprintf(stderr, "8. Invalid SHA512 result from \"%s\" input\n",
+        sha512_input_7 + 1);
+  }
+  return r;
+}
+
 int test_sha384_1(void)
 {
   uint8_t hash[KIT_SHA384_OUTPUT_SIZE_BYTES];
@@ -406,6 +435,8 @@ int main(int argc, char * argv[])
     return 1;
   if (test_sha256_7())
     return 1;
+  if (test_sha256_8())
+    return 1;
   if (test_sha224_1())
     return 1;
   if (test_sha224_2())
@@ -425,6 +456,8 @@ int main(int argc, char * argv[])
   if (test_sha512_6())
     return 1;
   if (test_sha512_7())
+    return 1;
+  if (test_sha512_8())
     return 1;
   if (test_sha384_1())
     return 1;

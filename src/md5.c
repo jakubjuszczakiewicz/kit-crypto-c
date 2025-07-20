@@ -74,25 +74,42 @@ void kit_md5_init(kit_md5_ctx * ctx)
   ctx->processed_bytes = 0;
 }
 
-static void kit_md5_iterate(kit_md5_ctx * ctx, const uint32_t * data)
+static void kit_md5_iterate(kit_md5_ctx * ctx, const uint8_t * data)
 {
   uint32_t x[16];
-  x[0] = HTOLE32(data[0]);
-  x[1] = HTOLE32(data[1]);
-  x[2] = HTOLE32(data[2]);
-  x[3] = HTOLE32(data[3]);
-  x[4] = HTOLE32(data[4]);
-  x[5] = HTOLE32(data[5]);
-  x[6] = HTOLE32(data[6]);
-  x[7] = HTOLE32(data[7]);
-  x[8] = HTOLE32(data[8]);
-  x[9] = HTOLE32(data[9]);
-  x[10] = HTOLE32(data[10]);
-  x[11] = HTOLE32(data[11]);
-  x[12] = HTOLE32(data[12]);
-  x[13] = HTOLE32(data[13]);
-  x[14] = HTOLE32(data[14]);
-  x[15] = HTOLE32(data[15]);
+
+  x[0] = ((uint32_t)data[0]) | ((uint32_t)data[1] << 8) |
+      ((uint32_t)data[2] << 16) | ((uint32_t)data[3] << 24);
+  x[1] = ((uint32_t)data[4]) | ((uint32_t)data[5] << 8) |
+      ((uint32_t)data[6] << 16) | ((uint32_t)data[7] << 24);
+  x[2] = ((uint32_t)data[8]) | ((uint32_t)data[9] << 8) |
+      ((uint32_t)data[10] << 16) | ((uint32_t)data[11] << 24);
+  x[3] = ((uint32_t)data[12]) | ((uint32_t)data[13] << 8) |
+      ((uint32_t)data[14] << 16) | ((uint32_t)data[15] << 24);
+  x[4] = ((uint32_t)data[16]) | ((uint32_t)data[17] << 8) |
+      ((uint32_t)data[18] << 16) | ((uint32_t)data[19] << 24);
+  x[5] = ((uint32_t)data[20]) | ((uint32_t)data[21] << 8) |
+      ((uint32_t)data[22] << 16) | ((uint32_t)data[23] << 24);
+  x[6] = ((uint32_t)data[24]) | ((uint32_t)data[25] << 8) |
+      ((uint32_t)data[26] << 16) | ((uint32_t)data[27] << 24);
+  x[7] = ((uint32_t)data[28]) | ((uint32_t)data[29] << 8) |
+      ((uint32_t)data[30] << 16) | ((uint32_t)data[31] << 24);
+  x[8] = ((uint32_t)data[32]) | ((uint32_t)data[33] << 8) |
+      ((uint32_t)data[34] << 16) | ((uint32_t)data[35] << 24);
+  x[9] = ((uint32_t)data[36]) | ((uint32_t)data[37] << 8) |
+      ((uint32_t)data[38] << 16) | ((uint32_t)data[39] << 24);
+  x[10] = ((uint32_t)data[40]) | ((uint32_t)data[41] << 8) |
+      ((uint32_t)data[42] << 16) | ((uint32_t)data[43] << 24);
+  x[11] = ((uint32_t)data[44]) | ((uint32_t)data[45] << 8) |
+      ((uint32_t)data[46] << 16) | ((uint32_t)data[47] << 24);
+  x[12] = ((uint32_t)data[48]) | ((uint32_t)data[49] << 8) |
+      ((uint32_t)data[50] << 16) | ((uint32_t)data[51] << 24);
+  x[13] = ((uint32_t)data[52]) | ((uint32_t)data[53] << 8) |
+      ((uint32_t)data[54] << 16) | ((uint32_t)data[55] << 24);
+  x[14] = ((uint32_t)data[56]) | ((uint32_t)data[57] << 8) |
+      ((uint32_t)data[58] << 16) | ((uint32_t)data[59] << 24);
+  x[15] = ((uint32_t)data[60]) | ((uint32_t)data[61] << 8) |
+      ((uint32_t)data[62] << 16) | ((uint32_t)data[63] << 24);
 
   uint32_t a = ctx->h[0], b = ctx->h[1], c = ctx->h[2], d = ctx->h[3];
   uint32_t tmp1, tmp2;
@@ -188,12 +205,12 @@ void kit_md5_append(kit_md5_ctx * ctx, const uint8_t * data, size_t length)
       ctx->buf_fill += add;
       if (ctx->buf_fill != sizeof(ctx->buf))
         return;
-      kit_md5_iterate(ctx, (uint32_t *)ctx->buf);
+      kit_md5_iterate(ctx, ctx->buf);
       ctx->processed_bytes += sizeof(ctx->buf);
       ctx->buf_fill = 0;
       pos += add;
     } else {
-      kit_md5_iterate(ctx, (uint32_t *)&data[pos]);
+      kit_md5_iterate(ctx, &data[pos]);
       pos += sizeof(ctx->buf);
       ctx->processed_bytes += sizeof(ctx->buf);
     }
@@ -203,7 +220,7 @@ void kit_md5_append(kit_md5_ctx * ctx, const uint8_t * data, size_t length)
 void kit_md5_finish(kit_md5_ctx * ctx, uint8_t * output)
 {
   if (ctx->buf_fill == sizeof(ctx->buf)) {
-    kit_md5_iterate(ctx, (uint32_t *)ctx->buf);
+    kit_md5_iterate(ctx, ctx->buf);
     ctx->buf_fill = 0;
   }
 
@@ -212,7 +229,7 @@ void kit_md5_finish(kit_md5_ctx * ctx, uint8_t * output)
     memset(&ctx->buf[ctx->buf_fill + 1], 0, sizeof(ctx->buf) - 1 -
         ctx->buf_fill);
     ctx->processed_bytes += ctx->buf_fill;
-    kit_md5_iterate(ctx, (uint32_t *)ctx->buf);
+    kit_md5_iterate(ctx, ctx->buf);
 
     memset(ctx->buf, 0, sizeof(ctx->buf));
   } else {
@@ -232,7 +249,7 @@ void kit_md5_finish(kit_md5_ctx * ctx, uint8_t * output)
   ctx->buf[sizeof(ctx->buf) - 7] = bits >> 8;
   ctx->buf[sizeof(ctx->buf) - 8] = bits;
 
-  kit_md5_iterate(ctx, (uint32_t *)ctx->buf);
+  kit_md5_iterate(ctx, ctx->buf);
 
   output[0] = ctx->h[0];
   output[1] = ctx->h[0] >> 8;

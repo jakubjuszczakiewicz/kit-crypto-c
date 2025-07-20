@@ -56,6 +56,11 @@ const char md5_input_7[] =
   "123456789012345678901234567890123456789012345678901234567890123456"
   "78901234567890";
 
+
+const char md5_input_8[] =
+  "  123456789012345678901234567890123456789012345678901234567890123456"
+  "78901234567890";
+
 int test_md5_1(void)
 {
   uint8_t hash[KIT_MD5_OUTPUT_SIZE_BYTES];
@@ -161,6 +166,17 @@ int test_md5_9(void)
   return r;
 }
 
+int test_md5_10(void)
+{
+  uint8_t hash[KIT_MD5_OUTPUT_SIZE_BYTES + 2];
+  kit_md5(hash, md5_input_8 + 2, sizeof(md5_input_8) - 3);
+  int r = memcmp(hash, hash_md5_7, sizeof(hash_md5_7));
+  if (r) {
+    fprintf(stderr, "10. Invalid MD5 result from empty input\n");
+  }
+  return r;
+}
+
 int main(int argc, char * argv[])
 {
   if (test_md5_1())
@@ -180,6 +196,8 @@ int main(int argc, char * argv[])
   if (test_md5_8())
     return 1;
   if (test_md5_9())
+    return 1;
+  if (test_md5_10())
     return 1;
 
   return 0;

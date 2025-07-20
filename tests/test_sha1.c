@@ -52,6 +52,9 @@ const char sha1_input_6[] = {
   "01234567012345670123456701234567"
 };
 
+const char sha1_input_7[] = "  abcdbcdecdefdefgefghfghighijhi" \
+  "jkijkljklmklmnlmnomnopnopq";
+
 int test_sha1_1(void)
 {
   uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES];
@@ -128,7 +131,7 @@ int test_sha1_6(void)
   int r = memcmp(hash, hash_sha1_6, sizeof(hash_sha1_6));
   if (r) {
     fprintf(stderr, "5. Invalid SHA1 result from \"%s\" 10 times input\n",
-        sha1_input_6);
+        sha1_input_6 + 1);
   }
   return r;
 }
@@ -140,6 +143,18 @@ int test_sha1_7(void)
   int r = memcmp(hash + 2, hash_sha1_1, sizeof(hash_sha1_1));
   if (r) {
     fprintf(stderr, "7. Invalid SHA1 result from empty input\n");
+  }
+  return r;
+}
+
+int test_sha1_8(void)
+{
+  uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES];
+  kit_sha1(hash, sha1_input_7 + 2, sizeof(sha1_input_7) - 3);
+  int r = memcmp(hash, hash_sha1_4, sizeof(hash_sha1_4));
+  if (r) {
+    fprintf(stderr, "8. Invalid SHA1 result from \"%s\" input\n",
+        sha1_input_4);
   }
   return r;
 }
@@ -159,6 +174,8 @@ int main(int argc, char * argv[])
   if (test_sha1_6())
     return 1;
   if (test_sha1_7())
+    return 1;
+  if (test_sha1_8())
     return 1;
 
   return 0;

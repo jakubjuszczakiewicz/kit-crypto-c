@@ -7,7 +7,7 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0
-#define VERSION_PATCH 9
+#define VERSION_PATCH 10
 #define VERSION_SUBSTR ""
 
 #define STR(s) #s
