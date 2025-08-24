@@ -259,6 +259,25 @@ int test_sha256_8(void)
   return r;
 }
 
+int test_sha256_9(void)
+{
+  uint8_t hash[KIT_SHA256_OUTPUT_SIZE_BYTES];
+  kit_sha256_ctx ctx;
+
+  kit_sha256_init(&ctx);
+  for (size_t i = 0; i < sizeof(sha256_input_8) - 3; i++) {
+    kit_sha256_append(&ctx, &sha256_input_8[2 + i], 1);
+  }
+  kit_sha256_finish(&ctx, hash);
+
+  int r = memcmp(hash, hash_sha256_3, sizeof(hash_sha256_3));
+  if (r) {
+    fprintf(stderr, "8. Invalid SHA256 result from \"%s\" input\n",
+        sha256_input_8 + 2);
+  }
+  return r;
+}
+
 int test_sha224_1(void)
 {
   uint8_t hash[KIT_SHA224_OUTPUT_SIZE_BYTES];
@@ -436,6 +455,8 @@ int main(int argc, char * argv[])
   if (test_sha256_7())
     return 1;
   if (test_sha256_8())
+    return 1;
+  if (test_sha256_9())
     return 1;
   if (test_sha224_1())
     return 1;

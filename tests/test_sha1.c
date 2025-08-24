@@ -55,6 +55,16 @@ const char sha1_input_6[] = {
 const char sha1_input_7[] = "  abcdbcdecdefdefgefghfghighijhi" \
   "jkijkljklmklmnlmnomnopnopq";
 
+const char sha1_input_8[] = \
+  "  123456789012345678901234567890123456789012345678901234567890123456"
+  "78901234567890123456789012345678901234567890123456789012345678901234567890"
+  "1234567890123456789012345678901234567890123456789012345678901234567890";
+
+const uint8_t hash_sha1_8[KIT_SHA1_OUTPUT_SIZE_BYTES] = {
+  0x3e, 0x4a, 0x61, 0x41, 0x01, 0xad, 0x84, 0x98, 0x5a, 0xb0, 0xfe, 0x54, 0xdc,
+  0x12, 0xa6, 0xd7, 0x15, 0x51, 0xe5, 0xae
+};
+
 int test_sha1_1(void)
 {
   uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES];
@@ -159,6 +169,37 @@ int test_sha1_8(void)
   return r;
 }
 
+int test_sha1_9(void)
+{
+  uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES];
+  kit_sha1_ctx ctx;
+
+  kit_sha1_init(&ctx);
+  for (size_t i = 0; i < sizeof(sha1_input_7) - 3; i++) {
+    kit_sha1_append(&ctx, &sha1_input_7[2 + i], 1);
+  }
+  kit_sha1_finish(&ctx, hash);
+
+  int r = memcmp(hash, hash_sha1_4, sizeof(hash_sha1_4));
+  if (r) {
+    fprintf(stderr, "9. Invalid SHA1 result from \"%s\" input\n",
+        sha1_input_7 + 2);
+  }
+  return r;
+}
+
+int test_sha1_10(void)
+{
+  uint8_t hash[KIT_SHA1_OUTPUT_SIZE_BYTES];
+  kit_sha1(hash, sha1_input_8 + 2, sizeof(sha1_input_8) - 3);
+  int r = memcmp(hash, hash_sha1_8, sizeof(hash_sha1_8));
+  if (r) {
+    fprintf(stderr, "10. Invalid SHA1 result from \"%s\" input\n",
+        sha1_input_4);
+  }
+  return r;
+}
+
 int main(int argc, char * argv[])
 {
   if (test_sha1_1())
@@ -176,6 +217,10 @@ int main(int argc, char * argv[])
   if (test_sha1_7())
     return 1;
   if (test_sha1_8())
+    return 1;
+  if (test_sha1_9())
+    return 1;
+  if (test_sha1_10())
     return 1;
 
   return 0;

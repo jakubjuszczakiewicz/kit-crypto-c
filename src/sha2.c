@@ -64,7 +64,7 @@ static const uint32_t sha224_init_vector[8] = {
   0x64f98fa7, 0xbefa4fa4
 };
 
-const uint32_t sha256_init_round_vector[64] = {
+static const uint32_t sha256_init_round_vector[64] = {
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
   0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
   0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -139,42 +139,25 @@ void kit_sha256_init(kit_sha256_ctx * ctx)
   ctx->processed_bytes = 0;
 }
 
-static void kit_sha256_iterate(kit_sha256_ctx * ctx, const uint8_t * data)
+static void kit_sha256_iterate(kit_sha256_ctx * ctx, const uint32_t * data)
 {
   uint32_t w[64];
-
-  w[0] = ((uint32_t)data[0] << 24) | ((uint32_t)data[1] << 16) |
-      ((uint32_t)data[2] << 8) | ((uint32_t)data[3]);
-  w[1] = ((uint32_t)data[4] << 24) | ((uint32_t)data[5] << 16) |
-      ((uint32_t)data[6] << 8) | ((uint32_t)data[7]);
-  w[2] = ((uint32_t)data[8] << 24) | ((uint32_t)data[9] << 16) |
-      ((uint32_t)data[10] << 8) | ((uint32_t)data[11]);
-  w[3] = ((uint32_t)data[12] << 24) | ((uint32_t)data[13] << 16) |
-      ((uint32_t)data[14] << 8) | ((uint32_t)data[15]);
-  w[4] = ((uint32_t)data[16] << 24) | ((uint32_t)data[17] << 16) |
-      ((uint32_t)data[18] << 8) | ((uint32_t)data[19]);
-  w[5] = ((uint32_t)data[20] << 24) | ((uint32_t)data[21] << 16) |
-      ((uint32_t)data[22] << 8) | ((uint32_t)data[23]);
-  w[6] = ((uint32_t)data[24] << 24) | ((uint32_t)data[25] << 16) |
-      ((uint32_t)data[26] << 8) | ((uint32_t)data[27]);
-  w[7] = ((uint32_t)data[28] << 24) | ((uint32_t)data[29] << 16) |
-      ((uint32_t)data[30] << 8) | ((uint32_t)data[31]);
-  w[8] = ((uint32_t)data[32] << 24) | ((uint32_t)data[33] << 16) |
-      ((uint32_t)data[34] << 8) | ((uint32_t)data[35]);
-  w[9] = ((uint32_t)data[36] << 24) | ((uint32_t)data[37] << 16) |
-      ((uint32_t)data[38] << 8) | ((uint32_t)data[39]);
-  w[10] = ((uint32_t)data[40] << 24) | ((uint32_t)data[41] << 16) |
-      ((uint32_t)data[42] << 8) | ((uint32_t)data[43]);
-  w[11] = ((uint32_t)data[44] << 24) | ((uint32_t)data[45] << 16) |
-      ((uint32_t)data[46] << 8) | ((uint32_t)data[47]);
-  w[12] = ((uint32_t)data[48] << 24) | ((uint32_t)data[49] << 16) |
-      ((uint32_t)data[50] << 8) | ((uint32_t)data[51]);
-  w[13] = ((uint32_t)data[52] << 24) | ((uint32_t)data[53] << 16) |
-      ((uint32_t)data[54] << 8) | ((uint32_t)data[55]);
-  w[14] = ((uint32_t)data[56] << 24) | ((uint32_t)data[57] << 16) |
-      ((uint32_t)data[58] << 8) | ((uint32_t)data[59]);
-  w[15] = ((uint32_t)data[60] << 24) | ((uint32_t)data[61] << 16) |
-      ((uint32_t)data[62] << 8) | ((uint32_t)data[63]);
+  w[0] = HTOBE32(data[0]);
+  w[1] = HTOBE32(data[1]);
+  w[2] = HTOBE32(data[2]);
+  w[3] = HTOBE32(data[3]);
+  w[4] = HTOBE32(data[4]);
+  w[5] = HTOBE32(data[5]);
+  w[6] = HTOBE32(data[6]);
+  w[7] = HTOBE32(data[7]);
+  w[8] = HTOBE32(data[8]);
+  w[9] = HTOBE32(data[9]);
+  w[10] = HTOBE32(data[10]);
+  w[11] = HTOBE32(data[11]);
+  w[12] = HTOBE32(data[12]);
+  w[13] = HTOBE32(data[13]);
+  w[14] = HTOBE32(data[14]);
+  w[15] = HTOBE32(data[15]);
 
   SHA256_INIT_EXP(16);
   SHA256_INIT_EXP(17);
@@ -318,14 +301,24 @@ void kit_sha256_append(kit_sha256_ctx * ctx,
       ctx->buf_fill += add;
       if (ctx->buf_fill != sizeof(ctx->buf))
         return;
-      kit_sha256_iterate(ctx, ctx->buf);
+      kit_sha256_iterate(ctx, (uint32_t *)ctx->buf);
       ctx->processed_bytes += sizeof(ctx->buf);
       ctx->buf_fill = 0;
       pos += add;
     } else {
-      kit_sha256_iterate(ctx, &data[pos]);
-      pos += sizeof(ctx->buf);
-      ctx->processed_bytes += sizeof(ctx->buf);
+      size_t ptr = (size_t)(&data[pos]);
+      if ((ptr & 0xF) == 0) {
+        kit_sha256_iterate(ctx, (uint32_t *)&data[pos]);
+        pos += sizeof(ctx->buf);
+        ctx->processed_bytes += sizeof(ctx->buf);
+      } else {
+        size_t add = sizeof(ctx->buf);
+        memcpy(&ctx->buf, &data[pos], add);
+        kit_sha256_iterate(ctx, (uint32_t *)ctx->buf);
+        ctx->processed_bytes += sizeof(ctx->buf);
+        ctx->buf_fill = 0;
+        pos += add;
+      }
     }
   }
 }
@@ -333,7 +326,7 @@ void kit_sha256_append(kit_sha256_ctx * ctx,
 void kit_sha256_finish_int(kit_sha256_ctx * ctx, uint8_t * output, int len)
 {
   if (ctx->buf_fill == sizeof(ctx->buf)) {
-    kit_sha256_iterate(ctx, ctx->buf);
+    kit_sha256_iterate(ctx, (uint32_t *)ctx->buf);
     ctx->buf_fill = 0;
   }
 
@@ -342,7 +335,7 @@ void kit_sha256_finish_int(kit_sha256_ctx * ctx, uint8_t * output, int len)
     memset(&ctx->buf[ctx->buf_fill + 1], 0, sizeof(ctx->buf) - 1 -
         ctx->buf_fill);
     ctx->processed_bytes += ctx->buf_fill;
-    kit_sha256_iterate(ctx, ctx->buf);
+    kit_sha256_iterate(ctx, (uint32_t *)ctx->buf);
 
     memset(ctx->buf, 0, sizeof(ctx->buf));
   } else {
@@ -362,42 +355,22 @@ void kit_sha256_finish_int(kit_sha256_ctx * ctx, uint8_t * output, int len)
   ctx->buf[sizeof(ctx->buf) - 7] = bits >> 48;
   ctx->buf[sizeof(ctx->buf) - 8] = bits >> 56;
 
-  kit_sha256_iterate(ctx, ctx->buf);
+  kit_sha256_iterate(ctx, (uint32_t *)ctx->buf);
 
-  output[0] = ctx->h[0] >> 24;
-  output[1] = ctx->h[0] >> 16;
-  output[2] = ctx->h[0] >> 8;
-  output[3] = ctx->h[0];
-  output[4] = ctx->h[1] >> 24;
-  output[5] = ctx->h[1] >> 16;
-  output[6] = ctx->h[1] >> 8;
-  output[7] = ctx->h[1];
-  output[8] = ctx->h[2] >> 24;
-  output[9] = ctx->h[2] >> 16;
-  output[10] = ctx->h[2] >> 8;
-  output[11] = ctx->h[2];
-  output[12] = ctx->h[3] >> 24;
-  output[13] = ctx->h[3] >> 16;
-  output[14] = ctx->h[3] >> 8;
-  output[15] = ctx->h[3];
-  output[16] = ctx->h[4] >> 24;
-  output[17] = ctx->h[4] >> 16;
-  output[18] = ctx->h[4] >> 8;
-  output[19] = ctx->h[4];
-  output[20] = ctx->h[5] >> 24;
-  output[21] = ctx->h[5] >> 16;
-  output[22] = ctx->h[5] >> 8;
-  output[23] = ctx->h[5];
-  output[24] = ctx->h[6] >> 24;
-  output[25] = ctx->h[6] >> 16;
-  output[26] = ctx->h[6] >> 8;
-  output[27] = ctx->h[6];
+  uint32_t out[8];
 
+  out[0] = HTOBE32(ctx->h[0]);
+  out[1] = HTOBE32(ctx->h[1]);
+  out[2] = HTOBE32(ctx->h[2]);
+  out[3] = HTOBE32(ctx->h[3]);
+  out[4] = HTOBE32(ctx->h[4]);
+  out[5] = HTOBE32(ctx->h[5]);
+  out[6] = HTOBE32(ctx->h[6]);
   if (len) {
-    output[28] = ctx->h[7] >> 24;
-    output[29] = ctx->h[7] >> 16;
-    output[30] = ctx->h[7] >> 8;
-    output[31] = ctx->h[7];
+    out[7] = HTOBE32(ctx->h[7]);
+    memcpy(output, out, KIT_SHA256_OUTPUT_SIZE_BYTES);
+  } else {
+    memcpy(output, out, KIT_SHA224_OUTPUT_SIZE_BYTES);
   }
 }
 
@@ -455,15 +428,15 @@ void kit_sha512_init(kit_sha512_ctx * ctx)
 }
 
 #ifdef ALG_SHA2_ASM_X86_64
-static void kit_sha512_asm_init(uint64_t * ctx, const uint8_t * data);
-static void kit_sha512_iterate_c(uint64_t * ctx, const uint8_t * data);
+static void kit_sha512_asm_init(uint64_t * ctx, const uint64_t * data);
+static void kit_sha512_iterate_c(uint64_t * ctx, const uint64_t * data);
 
-void (*kit_sha512_iterate)(uint64_t * ctx, const uint8_t * data) =
+void (*kit_sha512_iterate)(uint64_t * ctx, const uint64_t * data) =
     kit_sha512_asm_init;
 
-void kit_sha512_iterate_asm(uint64_t * ctx, const uint8_t * data);
+void kit_sha512_iterate_asm(uint64_t * ctx, const uint64_t * data);
 
-static void kit_sha512_asm_init(uint64_t * ctx, const uint8_t * data)
+static void kit_sha512_asm_init(uint64_t * ctx, const uint64_t * data)
 {
   if (is_sse41_supported()) {
     kit_sha512_iterate = kit_sha512_iterate_asm;
@@ -477,74 +450,26 @@ static void kit_sha512_asm_init(uint64_t * ctx, const uint8_t * data)
 #define kit_sha512_iterate kit_sha512_iterate_c
 #endif
 
-static void kit_sha512_iterate_c(uint64_t * ctx, const uint8_t * data)
+static void kit_sha512_iterate_c(uint64_t * ctx, const uint64_t * data)
 {
   uint64_t w[80];
 
-  w[0] = ((uint64_t)data[0] << 56) | ((uint64_t)data[1] << 48) |
-      ((uint64_t)data[2] << 40) | ((uint64_t)data[3] << 32) |
-      ((uint64_t)data[4] << 24) | ((uint64_t)data[5] << 16) |
-      ((uint64_t)data[6] << 8) | ((uint64_t)data[7]);
-  w[1] = ((uint64_t)data[8] << 56) | ((uint64_t)data[9] << 48) |
-      ((uint64_t)data[10] << 40) | ((uint64_t)data[11] << 32) |
-      ((uint64_t)data[12] << 24) | ((uint64_t)data[13] << 16) |
-      ((uint64_t)data[14] << 8) | ((uint64_t)data[15]);
-  w[2] = ((uint64_t)data[16] << 56) | ((uint64_t)data[17] << 48) |
-      ((uint64_t)data[18] << 40) | ((uint64_t)data[19] << 32) |
-      ((uint64_t)data[20] << 24) | ((uint64_t)data[21] << 16) |
-      ((uint64_t)data[22] << 8) | ((uint64_t)data[23]);
-  w[3] = ((uint64_t)data[24] << 56) | ((uint64_t)data[25] << 48) |
-      ((uint64_t)data[26] << 40) | ((uint64_t)data[27] << 32) |
-      ((uint64_t)data[28] << 24) | ((uint64_t)data[29] << 16) |
-      ((uint64_t)data[30] << 8) | ((uint64_t)data[31]);
-  w[4] = ((uint64_t)data[32] << 56) | ((uint64_t)data[33] << 48) |
-      ((uint64_t)data[34] << 40) | ((uint64_t)data[35] << 32) |
-      ((uint64_t)data[36] << 24) | ((uint64_t)data[37] << 16) |
-      ((uint64_t)data[38] << 8) | ((uint64_t)data[39]);
-  w[5] = ((uint64_t)data[40] << 56) | ((uint64_t)data[41] << 48) |
-      ((uint64_t)data[42] << 40) | ((uint64_t)data[43] << 32) |
-      ((uint64_t)data[44] << 24) | ((uint64_t)data[45] << 16) |
-      ((uint64_t)data[46] << 8) | ((uint64_t)data[47]);
-  w[6] = ((uint64_t)data[48] << 56) | ((uint64_t)data[49] << 48) |
-      ((uint64_t)data[50] << 40) | ((uint64_t)data[51] << 32) |
-      ((uint64_t)data[52] << 24) | ((uint64_t)data[53] << 16) |
-      ((uint64_t)data[54] << 8) | ((uint64_t)data[55]);
-  w[7] = ((uint64_t)data[56] << 56) | ((uint64_t)data[57] << 48) |
-      ((uint64_t)data[58] << 40) | ((uint64_t)data[59] << 32) |
-      ((uint64_t)data[60] << 24) | ((uint64_t)data[61] << 16) |
-      ((uint64_t)data[62] << 8) | ((uint64_t)data[63]);
-  w[8] = ((uint64_t)data[64] << 56) | ((uint64_t)data[65] << 48) |
-      ((uint64_t)data[66] << 40) | ((uint64_t)data[67] << 32) |
-      ((uint64_t)data[68] << 24) | ((uint64_t)data[69] << 16) |
-      ((uint64_t)data[70] << 8) | ((uint64_t)data[71]);
-  w[9] = ((uint64_t)data[72] << 56) | ((uint64_t)data[73] << 48) |
-      ((uint64_t)data[74] << 40) | ((uint64_t)data[75] << 32) |
-      ((uint64_t)data[76] << 24) | ((uint64_t)data[77] << 16) |
-      ((uint64_t)data[78] << 8) | ((uint64_t)data[79]);
-  w[10] = ((uint64_t)data[80] << 56) | ((uint64_t)data[81] << 48) |
-      ((uint64_t)data[82] << 40) | ((uint64_t)data[83] << 32) |
-      ((uint64_t)data[84] << 24) | ((uint64_t)data[85] << 16) |
-      ((uint64_t)data[86] << 8) | ((uint64_t)data[87]);
-  w[11] = ((uint64_t)data[88] << 56) | ((uint64_t)data[89] << 48) |
-      ((uint64_t)data[90] << 40) | ((uint64_t)data[91] << 32) |
-      ((uint64_t)data[92] << 24) | ((uint64_t)data[93] << 16) |
-      ((uint64_t)data[94] << 8) | ((uint64_t)data[95]);
-  w[12] = ((uint64_t)data[96] << 56) | ((uint64_t)data[97] << 48) |
-      ((uint64_t)data[98] << 40) | ((uint64_t)data[99] << 32) |
-      ((uint64_t)data[100] << 24) | ((uint64_t)data[101] << 16) |
-      ((uint64_t)data[102] << 8) | ((uint64_t)data[103]);
-  w[13] = ((uint64_t)data[104] << 56) | ((uint64_t)data[105] << 48) |
-      ((uint64_t)data[106] << 40) | ((uint64_t)data[107] << 32) |
-      ((uint64_t)data[108] << 24) | ((uint64_t)data[109] << 16) |
-      ((uint64_t)data[110] << 8) | ((uint64_t)data[111]);
-  w[14] = ((uint64_t)data[112] << 56) | ((uint64_t)data[113] << 48) |
-      ((uint64_t)data[114] << 40) | ((uint64_t)data[115] << 32) |
-      ((uint64_t)data[116] << 24) | ((uint64_t)data[117] << 16) |
-      ((uint64_t)data[118] << 8) | ((uint64_t)data[119]);
-  w[15] = ((uint64_t)data[120] << 56) | ((uint64_t)data[121] << 48) |
-      ((uint64_t)data[122] << 40) | ((uint64_t)data[123] << 32) |
-      ((uint64_t)data[124] << 24) | ((uint64_t)data[125] << 16) |
-      ((uint64_t)data[126] << 8) | ((uint64_t)data[127]);
+  w[0] = HTOBE64(data[0]);
+  w[1] = HTOBE64(data[1]);
+  w[2] = HTOBE64(data[2]);
+  w[3] = HTOBE64(data[3]);
+  w[4] = HTOBE64(data[4]);
+  w[5] = HTOBE64(data[5]);
+  w[6] = HTOBE64(data[6]);
+  w[7] = HTOBE64(data[7]);
+  w[8] = HTOBE64(data[8]);
+  w[9] = HTOBE64(data[9]);
+  w[10] = HTOBE64(data[10]);
+  w[11] = HTOBE64(data[11]);
+  w[12] = HTOBE64(data[12]);
+  w[13] = HTOBE64(data[13]);
+  w[14] = HTOBE64(data[14]);
+  w[15] = HTOBE64(data[15]);
 
   SHA512_INIT_EXP(16);
   SHA512_INIT_EXP(17);
@@ -720,18 +645,30 @@ void kit_sha512_append(kit_sha512_ctx * ctx, const uint8_t * data,
       ctx->buf_fill += add;
       if (ctx->buf_fill != sizeof(ctx->buf))
         return;
-      kit_sha512_iterate(ctx->h, ctx->buf);
+      kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
       ctx->processed_bytes[0] += sizeof(ctx->buf);
       if (ctx->processed_bytes[0] < sizeof(ctx->buf))
         ctx->processed_bytes[1]++;
       ctx->buf_fill = 0;
       pos += add;
     } else {
-      kit_sha512_iterate(ctx->h, &data[pos]);
-      pos += sizeof(ctx->buf);
-      ctx->processed_bytes[0] += sizeof(ctx->buf);
-      if (ctx->processed_bytes[0] < sizeof(ctx->buf))
-        ctx->processed_bytes[1]++;
+      size_t ptr = (size_t)(&data[pos]);
+      if ((ptr & 0xF) == 0) {
+        kit_sha512_iterate(ctx->h, (uint64_t *)&data[pos]);
+        pos += sizeof(ctx->buf);
+        ctx->processed_bytes[0] += sizeof(ctx->buf);
+        if (ctx->processed_bytes[0] < sizeof(ctx->buf))
+          ctx->processed_bytes[1]++;
+      } else {
+        size_t add = sizeof(ctx->buf);
+        memcpy(&ctx->buf, &data[pos], add);
+        kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
+        ctx->processed_bytes[0] += sizeof(ctx->buf);
+        if (ctx->processed_bytes[0] < sizeof(ctx->buf))
+          ctx->processed_bytes[1]++;
+        ctx->buf_fill = 0;
+        pos += add;
+      }
     }
   }
 }
@@ -739,7 +676,7 @@ void kit_sha512_append(kit_sha512_ctx * ctx, const uint8_t * data,
 void kit_sha512_finish_int(kit_sha512_ctx * ctx, uint8_t * output, int len)
 {
   if (ctx->buf_fill == sizeof(ctx->buf)) {
-    kit_sha512_iterate(ctx->h, ctx->buf);
+    kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
     ctx->buf_fill = 0;
   }
 
@@ -750,7 +687,7 @@ void kit_sha512_finish_int(kit_sha512_ctx * ctx, uint8_t * output, int len)
     ctx->processed_bytes[0] += ctx->buf_fill;
     if (ctx->processed_bytes[0] < ctx->buf_fill)
       ctx->processed_bytes[1]++;
-    kit_sha512_iterate(ctx->h, ctx->buf);
+    kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
 
     memset(ctx->buf, 0, sizeof(ctx->buf));
   } else {
@@ -782,74 +719,22 @@ void kit_sha512_finish_int(kit_sha512_ctx * ctx, uint8_t * output, int len)
   ctx->buf[sizeof(ctx->buf) - 15] = bits[1] >> 48;
   ctx->buf[sizeof(ctx->buf) - 16] = bits[1] >> 56;
 
-  kit_sha512_iterate(ctx->h, ctx->buf);
+  kit_sha512_iterate(ctx->h, (uint64_t *)ctx->buf);
 
-  output[0] = ctx->h[0] >> 56;
-  output[1] = ctx->h[0] >> 48;
-  output[2] = ctx->h[0] >> 40;
-  output[3] = ctx->h[0] >> 32;
-  output[4] = ctx->h[0] >> 24;
-  output[5] = ctx->h[0] >> 16;
-  output[6] = ctx->h[0] >> 8;
-  output[7] = ctx->h[0];
-  output[8] = ctx->h[1] >> 56;
-  output[9] = ctx->h[1] >> 48;
-  output[10] = ctx->h[1] >> 40;
-  output[11] = ctx->h[1] >> 32;
-  output[12] = ctx->h[1] >> 24;
-  output[13] = ctx->h[1] >> 16;
-  output[14] = ctx->h[1] >> 8;
-  output[15] = ctx->h[1];
-  output[16] = ctx->h[2] >> 56;
-  output[17] = ctx->h[2] >> 48;
-  output[18] = ctx->h[2] >> 40;
-  output[19] = ctx->h[2] >> 32;
-  output[20] = ctx->h[2] >> 24;
-  output[21] = ctx->h[2] >> 16;
-  output[22] = ctx->h[2] >> 8;
-  output[23] = ctx->h[2];
-  output[24] = ctx->h[3] >> 56;
-  output[25] = ctx->h[3] >> 48;
-  output[26] = ctx->h[3] >> 40;
-  output[27] = ctx->h[3] >> 32;
-  output[28] = ctx->h[3] >> 24;
-  output[29] = ctx->h[3] >> 16;
-  output[30] = ctx->h[3] >> 8;
-  output[31] = ctx->h[3];
-  output[32] = ctx->h[4] >> 56;
-  output[33] = ctx->h[4] >> 48;
-  output[34] = ctx->h[4] >> 40;
-  output[35] = ctx->h[4] >> 32;
-  output[36] = ctx->h[4] >> 24;
-  output[37] = ctx->h[4] >> 16;
-  output[38] = ctx->h[4] >> 8;
-  output[39] = ctx->h[4];
-  output[40] = ctx->h[5] >> 56;
-  output[41] = ctx->h[5] >> 48;
-  output[42] = ctx->h[5] >> 40;
-  output[43] = ctx->h[5] >> 32;
-  output[44] = ctx->h[5] >> 24;
-  output[45] = ctx->h[5] >> 16;
-  output[46] = ctx->h[5] >> 8;
-  output[47] = ctx->h[5];
+  uint64_t out[8];
 
+  out[0] = HTOBE64(ctx->h[0]);
+  out[1] = HTOBE64(ctx->h[1]);
+  out[2] = HTOBE64(ctx->h[2]);
+  out[3] = HTOBE64(ctx->h[3]);
+  out[4] = HTOBE64(ctx->h[4]);
+  out[5] = HTOBE64(ctx->h[5]);
   if (len) {
-    output[48] = ctx->h[6] >> 56;
-    output[49] = ctx->h[6] >> 48;
-    output[50] = ctx->h[6] >> 40;
-    output[51] = ctx->h[6] >> 32;
-    output[52] = ctx->h[6] >> 24;
-    output[53] = ctx->h[6] >> 16;
-    output[54] = ctx->h[6] >> 8;
-    output[55] = ctx->h[6];
-    output[56] = ctx->h[7] >> 56;
-    output[57] = ctx->h[7] >> 48;
-    output[58] = ctx->h[7] >> 40;
-    output[59] = ctx->h[7] >> 32;
-    output[60] = ctx->h[7] >> 24;
-    output[61] = ctx->h[7] >> 16;
-    output[62] = ctx->h[7] >> 8;
-    output[63] = ctx->h[7];
+    out[6] = HTOBE64(ctx->h[6]);
+    out[7] = HTOBE64(ctx->h[7]);
+    memcpy(output, out, KIT_SHA512_OUTPUT_SIZE_BYTES);
+  } else {
+    memcpy(output, out, KIT_SHA384_OUTPUT_SIZE_BYTES);
   }
 }
 

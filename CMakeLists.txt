@@ -1,7 +1,7 @@
-# Copyright (c) 2025 Krypto-IT Jakub Juszczakiewicz
+# Copyright (c) 2025 Jakub Juszczakiewicz
 # All rights reserved.
 
-cmake_minimum_required(VERSION 3.1...3.9)
+cmake_minimum_required(VERSION 3.1...3.13)
 project(kit-crypto-c C)
 
 set(WITH_TESTS TRUE CACHE BOOL true)
@@ -30,6 +30,7 @@ set(ASM False CACHE BOOL "Use assembler code")
 
 if (ASM)
 set(CPUNAME "" CACHE STRING "CPU name")
+enable_language(ASM)
 endif()
 
 set(ALG_AES True CACHE BOOL "Add support for AES algorithm")

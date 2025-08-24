@@ -1,3 +1,6 @@
+; Copyright (c) 2025 Jakub Juszczakiewicz
+; All rights reserved.
+
 BITS 32
 
 SECTION .note.GNU-stack noalloc noexec nowrite progbits

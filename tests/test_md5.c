@@ -61,6 +61,16 @@ const char md5_input_8[] =
   "  123456789012345678901234567890123456789012345678901234567890123456"
   "78901234567890";
 
+const char md5_input_9[] =
+  "  123456789012345678901234567890123456789012345678901234567890123456"
+  "78901234567890123456789012345678901234567890123456789012345678901234567890"
+  "1234567890123456789012345678901234567890123456789012345678901234567890";
+
+const uint8_t hash_md5_9[KIT_MD5_OUTPUT_SIZE_BYTES] = {
+  0x1e, 0x59, 0xb6, 0x15, 0x83, 0xc4, 0x52, 0xf0, 0x38, 0x89, 0x7f, 0x41, 0xda,
+  0x03, 0x09, 0x7b
+};
+
 int test_md5_1(void)
 {
   uint8_t hash[KIT_MD5_OUTPUT_SIZE_BYTES];
@@ -172,9 +182,22 @@ int test_md5_10(void)
   kit_md5(hash, md5_input_8 + 2, sizeof(md5_input_8) - 3);
   int r = memcmp(hash, hash_md5_7, sizeof(hash_md5_7));
   if (r) {
-    fprintf(stderr, "10. Invalid MD5 result from empty input\n");
+    fprintf(stderr, "10. Invalid MD5 result from \"%s\" input\n",
+        md5_input_8 + 2);
   }
   return r;
+}
+
+int test_md5_11(void)
+{
+  uint8_t hash[KIT_MD5_OUTPUT_SIZE_BYTES + 2];
+  kit_md5(hash, md5_input_9 + 2, sizeof(md5_input_9) - 3);
+  int r = memcmp(hash, hash_md5_9, sizeof(hash_md5_9));
+  if (r) {
+    fprintf(stderr, "11. Invalid MD5 result from \"%s\" input\n",
+        md5_input_9 + 2);
+  }
+  return 0;
 }
 
 int main(int argc, char * argv[])
@@ -198,6 +221,8 @@ int main(int argc, char * argv[])
   if (test_md5_9())
     return 1;
   if (test_md5_10())
+    return 1;
+  if (test_md5_11())
     return 1;
 
   return 0;

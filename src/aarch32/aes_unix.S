@@ -1,3 +1,6 @@
+; Copyright (c) 2025 Jakub Juszczakiewicz
+; All rights reserved.
+
 .text
 
 .global kit_aes_encrypt_block_128_asm

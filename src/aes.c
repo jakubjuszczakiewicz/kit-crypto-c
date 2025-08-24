@@ -211,10 +211,7 @@ void kit_aes_init_128(kit_aes_key * key, const uint8_t * source)
 {
   kit_aes_init_func();
 
-  key->key[0] = *((uint32_t *)&source[0]);
-  key->key[1] = *((uint32_t *)&source[4]);
-  key->key[2] = *((uint32_t *)&source[8]);
-  key->key[3] = *((uint32_t *)&source[12]);
+  memcpy(key->key, source, 16);
 
   for (unsigned int i = 0; i < 44; i += 4) {
     uint32_t temp;
@@ -244,12 +241,7 @@ void kit_aes_init_192(kit_aes_key * key, const uint8_t * source)
 {
   kit_aes_init_func();
 
-  key->key[0] = *((uint32_t *)&source[0]);
-  key->key[1] = *((uint32_t *)&source[4]);
-  key->key[2] = *((uint32_t *)&source[8]);
-  key->key[3] = *((uint32_t *)&source[12]);
-  key->key[4] = *((uint32_t *)&source[16]);
-  key->key[5] = *((uint32_t *)&source[20]);
+  memcpy(key->key, source, 24);
 
   for (unsigned int i = 0; i < 66; i += 6) {
     uint32_t temp;
@@ -285,14 +277,7 @@ void kit_aes_init_256(kit_aes_key * key, const uint8_t * source)
 {
   kit_aes_init_func();
 
-  key->key[0] = *((uint32_t *)&source[0]);
-  key->key[1] = *((uint32_t *)&source[4]);
-  key->key[2] = *((uint32_t *)&source[8]);
-  key->key[3] = *((uint32_t *)&source[12]);
-  key->key[4] = *((uint32_t *)&source[16]);
-  key->key[5] = *((uint32_t *)&source[20]);
-  key->key[6] = *((uint32_t *)&source[24]);
-  key->key[7] = *((uint32_t *)&source[28]);
+  memcpy(key->key, source, 32);
 
   for (unsigned int i = 0; i < 88; i += 8) {
     uint32_t temp;
