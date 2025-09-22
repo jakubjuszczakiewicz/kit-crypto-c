@@ -3,6 +3,8 @@
 
 enable_testing()
 
+list(APPEND TESTS version)
+
 if (ALG_AES)
 list(APPEND TESTS aes)
 list(APPEND PERF_TESTS aes)
@@ -32,10 +34,10 @@ if (ALG_UNG)
 list(APPEND TESTS ung)
 endif()
 
-if (BUILD_SHARED)
-  set(TESTLIB kitcryptoc)
-elseif (BUILD_STATIC)
+if (BUILD_STATIC)
   set(TESTLIB kitcryptoc_static)
+elseif (BUILD_SHARED)
+  set(TESTLIB kitcryptoc)
 else()
   message(FATAL_ERROR "Can't build test without lib")
 endif()

@@ -120,15 +120,6 @@ const uint64_t sha512_init_round_vector[80] = {
   0x5fcb6fab3ad6faec, 0x6c44198c4a475817
 };
 
-#ifdef ALG_SHA2_ASM_X86_64
-int is_sse41_supported(void);
-#else
-static int is_sse41_supported(void)
-{
-  return 0;
-}
-#endif
-
 void kit_sha256_init(kit_sha256_ctx * ctx)
 {
   for (size_t i = 0; i < 8; i++)
@@ -427,30 +418,7 @@ void kit_sha512_init(kit_sha512_ctx * ctx)
   ctx->processed_bytes[1] = 0;
 }
 
-#ifdef ALG_SHA2_ASM_X86_64
-static void kit_sha512_asm_init(uint64_t * ctx, const uint64_t * data);
-static void kit_sha512_iterate_c(uint64_t * ctx, const uint64_t * data);
-
-void (*kit_sha512_iterate)(uint64_t * ctx, const uint64_t * data) =
-    kit_sha512_asm_init;
-
-void kit_sha512_iterate_asm(uint64_t * ctx, const uint64_t * data);
-
-static void kit_sha512_asm_init(uint64_t * ctx, const uint64_t * data)
-{
-  if (is_sse41_supported()) {
-    kit_sha512_iterate = kit_sha512_iterate_asm;
-  } else {
-    kit_sha512_iterate = kit_sha512_iterate_c;
-  }
-  kit_sha512_iterate(ctx, data);
-}
-
-#else
-#define kit_sha512_iterate kit_sha512_iterate_c
-#endif
-
-static void kit_sha512_iterate_c(uint64_t * ctx, const uint64_t * data)
+static void kit_sha512_iterate(uint64_t * ctx, const uint64_t * data)
 {
   uint64_t w[80];
 

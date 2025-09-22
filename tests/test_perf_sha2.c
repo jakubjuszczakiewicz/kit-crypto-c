@@ -10,7 +10,7 @@
 #define TEST_COUNT (1024)
 #define TEST_SIZE (1024 * 1024)
 
-uint64_t test_sha2_512(size_t len, uint8_t * data)
+void test_sha2_512(size_t len, uint8_t * data)
 {
   uint8_t hash[KIT_SHA512_OUTPUT_SIZE_BYTES];
 

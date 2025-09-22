@@ -1,5 +1,5 @@
-; Copyright (c) 2025 Jakub Juszczakiewicz
-; All rights reserved.
+# Copyright (c) 2025 Jakub Juszczakiewicz
+# All rights reserved.
 
 .text
 
